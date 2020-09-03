@@ -67,7 +67,7 @@ class PatchGeneratorWithPaddingIHC(PatchGeneratorIHC):
             patch_region = ihc_slide.get_region(x_min, y_min, w, h, self._patch_level)
             patch_stainings = ihc_slide.get_stainings(patch_region)
 
-            yield PatchPaddingIHC(patch_stainings, real_x, real_y, self._patch_size, w, h)
+            yield x_min, y_min, PatchPaddingIHC(patch_stainings, real_x, real_y, self._patch_size, w, h)
 
 
 class GridPatchAnalysis(ABC):
@@ -77,7 +77,14 @@ class GridPatchAnalysis(ABC):
 
     def run(self, ihc_slide, all_indices):
         results = []  # row list
-        for patch in self.patch_generator.get_patches(ihc_slide, all_indices):
+        for x, y, patch in self.patch_generator.get_patches(ihc_slide, all_indices):
             result = self.patch_analysis.run(patch)
+            result['patch.x'] = x
+            result['patch.y'] = y
+            result['patch.w'] = patch.w
+            result['patch.h'] = patch.h
+            result['patch.pad_x'] = patch.real_x
+            result['patch.pad_y'] = patch.real_y
+            print(result)
             results.append(result)
         return results
