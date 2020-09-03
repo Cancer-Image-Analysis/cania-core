@@ -13,11 +13,18 @@ class PatchGenerator(ABC):
 
 
 class PatchPaddingIHC(object):
-    def __init__(self, stainings, real_x, real_y, size):
+    def __init__(self, stainings, real_x, real_y, size, w, h):
         self.stainings = stainings
+        self.size = size
         self.real_x = real_x
         self.real_y = real_y
-        self.size = size
+        self.w = w
+        self.h = h
+
+    def get_real_surface_mask(self):
+        real_surface_mask = np.zeros((self.h, self.w), dtype=np.uint8)
+        real_surface_mask[self.real_y:self.real_y+self.size, self.real_x:self.real_x+self.size] = 1
+        return real_surface_mask
 
 
 class PatchGeneratorIHC(PatchGenerator):
@@ -60,7 +67,7 @@ class PatchGeneratorWithPaddingIHC(PatchGeneratorIHC):
             patch_region = ihc_slide.get_region(x_min, y_min, w, h, self._patch_level)
             patch_stainings = ihc_slide.get_stainings(patch_region)
 
-            yield PatchPaddingIHC(patch_stainings, real_x, real_y, self._patch_size)
+            yield PatchPaddingIHC(patch_stainings, real_x, real_y, self._patch_size, w, h)
 
 
 class GridPatchAnalysis(ABC):
@@ -70,14 +77,7 @@ class GridPatchAnalysis(ABC):
 
     def run(self, ihc_slide, all_indices):
         results = []  # row list
-        melanoma = np.zeros((779, 351)).astype(np.uint8)
-        CD8 = np.zeros((779, 351)).astype(np.uint8)
-        for patch, indices in zip(self.patch_generator.get_patches(ihc_slide, all_indices), all_indices/256):
-            x, y = int(indices[1]), int(indices[0])
+        for patch in self.patch_generator.get_patches(ihc_slide, all_indices):
             result = self.patch_analysis.run(patch)
-            melanoma[y, x] = int(result['melanoma.n'])
-            CD8[y, x] = int(result['CD8.n'])
             results.append(result)
-        cv2.imwrite('melanoma_map.png', cv2.applyColorMap(melanoma, cv2.COLORMAP_VIRIDIS))
-        cv2.imwrite('CD8_map.png', cv2.applyColorMap(CD8, cv2.COLORMAP_VIRIDIS))
         return results

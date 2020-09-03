@@ -15,6 +15,7 @@ __maintainer__ = "Kevin Cortacero"
 __email__ = "kevin.cortacero@inserm.fr"
 __status__ = "Production"
 
+
 class InputData(ABC):
     def __init__(self, data):
         self._content = data
@@ -22,6 +23,7 @@ class InputData(ABC):
     @abstractmethod
     def read(self):
         pass
+
 
 class CohortDataFrame(InputData):
     def __init__(self, data):
@@ -33,6 +35,7 @@ class CohortDataFrame(InputData):
             name = row[0]
             if row.TODO == 1 and filepath != 0:
                 yield (name, filepath)
+
 
 class AnalysisProcedure(object):
     '''
