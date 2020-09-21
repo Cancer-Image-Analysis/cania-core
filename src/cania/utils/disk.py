@@ -36,3 +36,6 @@ class Disk(object):
         filepath = self.location / next_location
         filepath.mkdir(parents=True, exist_ok=True)
         return Disk(filepath)
+
+    def ls(self, regex='*'):
+        return self.location.glob(regex)
