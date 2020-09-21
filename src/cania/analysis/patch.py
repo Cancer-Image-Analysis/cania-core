@@ -85,6 +85,5 @@ class GridPatchAnalysis(ABC):
             result['patch.h'] = patch.h
             result['patch.pad_x'] = patch.real_x
             result['patch.pad_y'] = patch.real_y
-            print(result)
             results.append(result)
         return results
