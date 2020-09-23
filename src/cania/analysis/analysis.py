@@ -65,10 +65,9 @@ class AnalysisProcedure(object):
         all_results = {}
 
         for (name, filepath) in self.__input_data.read():
-            print(name)
             result = self.__procedure.run(filepath)
-            results_df = pd.DataFrame(result, columns=result[0].keys())
-            all_results[name] = results_df
-            results_df.to_csv(name + '_features.csv')
-            print(results_df)
+            if self.__export_method == 'dataframe':
+                results_df = pd.DataFrame(result, columns=result[0].keys())
+                all_results[name] = results_df
+                results_df.to_csv(name + '_features.csv')
         return all_results
