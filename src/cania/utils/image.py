@@ -18,7 +18,7 @@ def read_mirax(filename):
 
 
 def read_lsm(filename):
-    pass
+    return tifffile.imread(filename)
 
 
 def read_tiff(filename):
@@ -36,8 +36,8 @@ def write_bgr(filename, rgb_image):
     cv2.imwrite(filename, rgb2bgr(rgb_image))
 
 
-def write_tiff():
-    pass
+def write_tiff(filename, tiff_image):
+    tifffile.imwrite(filename, tiff_image, imagej=True)
 
 
 def write_gray():
@@ -60,6 +60,11 @@ def bgr2hsv(img):
 
 def rgb2bgr(img):
     return cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+
+
+def gray2rgb(img):
+    return cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+
 
 
 """ channels """
