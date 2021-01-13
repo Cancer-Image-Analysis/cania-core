@@ -1,11 +1,14 @@
 from pathlib import Path
+import zipfile
 import pandas as pd
 
-from cgpip.utils.image import read_rgb, write_rgb, read_tiff
+from cania.utils.image import read_rgb, write_rgb, read_tiff
 
 PNG = '.png'
+JPG = '.jpg'
 CSV = '.csv'
 TIF = '.tif'
+ZIP = '.zip'
 
 
 class Disk(object):
@@ -25,12 +28,24 @@ class Disk(object):
         filepath = self.location / filename
         extension = filepath.suffix
         filepath = str(filepath)
-        if extension == PNG:
+        if extension == PNG or extension == JPG:
             return read_rgb(filepath)
         if extension == CSV:
             return pd.read_csv(filepath)
         if extension == TIF:
             return read_tiff(filepath)
+
+    def unzip(self, filename):
+        filepath = self.location / filename
+        extension = filepath.suffix
+        filepath = str(filepath)
+        unzip_folder = filename.replace(ZIP, '')
+        new_location = self.location / unzip_folder
+        if extension == ZIP:
+            with zipfile.ZipFile(filepath, 'r') as zip_ref:
+                zip_ref.extractall(str(new_location))
+            unzip_folder = filename.replace(ZIP, '')
+            return Disk(new_location)
 
     def next(self, next_location):
         filepath = self.location / next_location
