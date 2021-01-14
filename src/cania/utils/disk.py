@@ -39,6 +39,7 @@ class Disk(object):
         filepath = self.location / filename
         extension = filepath.suffix
         filepath = str(filepath)
+        print(filepath)
         unzip_folder = filename.replace(ZIP, '')
         new_location = self.location / unzip_folder
         if extension == ZIP:
