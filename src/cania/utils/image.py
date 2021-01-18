@@ -101,6 +101,15 @@ def resize(img, scale):
     return cv2.resize(img, scale)
 
 
+def count_in_mask(image, mask, threshold=0):
+    _, image_th = cv2.threshold(image, threshold, 1, cv2.THRESH_BINARY)
+    return np.count_nonzero(cv2.bitwise_and(image_th, image_th, mask=mask))
+
+
+def mean_in_mask(image, mask):
+    return np.mean(cv2.bitwise_and(image, image, mask=mask))
+
+
 def imfill(img):
     # https://www.learnopencv.com/filling-holes-in-an-image-using-opencv-python-c/
     im_floodfill = img.copy()

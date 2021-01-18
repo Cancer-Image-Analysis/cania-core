@@ -9,7 +9,7 @@ JPG = '.jpg'
 CSV = '.csv'
 TIF = '.tif'
 ZIP = '.zip'
-
+LSM = '.lsm'
 
 class Disk(object):
     def __init__(self, location):
@@ -32,14 +32,13 @@ class Disk(object):
             return read_rgb(filepath)
         if extension == CSV:
             return pd.read_csv(filepath)
-        if extension == TIF:
+        if extension == TIF or extension == LSM:
             return read_tiff(filepath)
 
     def unzip(self, filename):
         filepath = self.location / filename
         extension = filepath.suffix
         filepath = str(filepath)
-        print(filepath)
         unzip_folder = filename.replace(ZIP, '')
         new_location = self.location / unzip_folder
         if extension == ZIP:
@@ -55,3 +54,8 @@ class Disk(object):
 
     def ls(self, regex='*'):
         return self.location.glob(regex)
+
+    def save_as_csv(self, dictionary, filename):
+        filepath = self.location / filename
+        df = pd.DataFrame(data=dictionary)
+        df.to_csv(str(filepath))
