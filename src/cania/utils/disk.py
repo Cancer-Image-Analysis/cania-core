@@ -11,6 +11,7 @@ TIF = '.tif'
 ZIP = '.zip'
 LSM = '.lsm'
 
+
 class Disk(object):
     def __init__(self, location):
         self.location = Path(location)
@@ -41,10 +42,12 @@ class Disk(object):
         filepath = str(filepath)
         unzip_folder = filename.replace(ZIP, '')
         new_location = self.location / unzip_folder
+        if new_location.exists():
+            return Disk(new_location)
+
         if extension == ZIP:
             with zipfile.ZipFile(filepath, 'r') as zip_ref:
                 zip_ref.extractall(str(new_location))
-            unzip_folder = filename.replace(ZIP, '')
             return Disk(new_location)
 
     def next(self, next_location):

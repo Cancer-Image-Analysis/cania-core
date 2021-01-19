@@ -129,6 +129,16 @@ def split_mask_with_line(mask, line):
     return submasks, centroids
 
 
+def intersection_with_line(mask, line):
+    line_mask = new_image(mask.shape)
+    line_mask = cv2.line(line_mask, line[0], line[1], 1, 2)
+    contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    mask_cnt = new_image(mask.shape)
+    cv2.drawContours(mask_cnt, contours, -1, 1, 2)
+    intersection = cv2.bitwise_and(line_mask, mask_cnt)
+    centroid = np.mean(np.argwhere(intersection), axis=0)
+    return centroid
+
 
 def imfill(img):
     # https://www.learnopencv.com/filling-holes-in-an-image-using-opencv-python-c/
