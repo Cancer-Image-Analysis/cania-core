@@ -21,6 +21,9 @@ class Vector(object):
         norm = self.norm()
         return Vector(self.x / norm, self.y / norm)
 
+    def distance(self, other):
+        return ((self.x - other.x)**2 + (self.y - other.y)**2)**0.5
+
     def perp(self):
         return Vector(1, -self.x / self.y)
 

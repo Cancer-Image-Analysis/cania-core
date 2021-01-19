@@ -2,6 +2,8 @@ import tifffile
 import cv2
 import numpy as np
 
+from cania.utils.vector import Vector
+
 """ read images """
 
 
@@ -81,7 +83,6 @@ def overlay(img, mask, color=[255, 255, 0], alpha=0.4):
     # Ref: http://www.pyimagesearch.com/2016/03/07/transparent-overlays-with-opencv/
     out = img.copy()
     img_layer = img.copy()
-    print(mask.shape)
     img_layer[np.where(mask)] = color
     overlayed = cv2.addWeighted(img_layer, alpha, out, 1 - alpha, 0, out)
     contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -108,6 +109,25 @@ def count_in_mask(image, mask, threshold=0):
 
 def mean_in_mask(image, mask):
     return np.mean(cv2.bitwise_and(image, image, mask=mask))
+
+
+def split_mask_with_line(mask, line):
+    line_mask = new_image(mask.shape)
+    line_mask = cv2.line(line_mask, line[0], line[1], 1, 2)
+    splitted_mask = cv2.bitwise_and(mask, cv2.bitwise_not(line_mask))
+    contours, _ = cv2.findContours(splitted_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    submasks = []
+    centroids = []
+    for i, c in enumerate(contours):
+        submask = new_image(mask.shape)
+        cv2.drawContours(submask, contours, i, 1, 2)
+        M = cv2.moments(c)
+        x_centroid = round(M['m10'] / M['m00'])
+        y_centroid = round(M['m01'] / M['m00'])
+        submasks.append(imfill(submask))
+        centroids.append(Vector(x_centroid, y_centroid))
+    return submasks, centroids
+
 
 
 def imfill(img):
