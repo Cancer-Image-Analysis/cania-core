@@ -79,14 +79,17 @@ def split_channels(image):
 """ draw on images """
 
 
-def overlay(img, mask, color=[255, 255, 0], alpha=0.4):
+def overlay(img, mask, color=[255, 255, 0], alpha=0.4, border_color='same'):
     # Ref: http://www.pyimagesearch.com/2016/03/07/transparent-overlays-with-opencv/
     out = img.copy()
     img_layer = img.copy()
     img_layer[np.where(mask)] = color
     overlayed = cv2.addWeighted(img_layer, alpha, out, 1 - alpha, 0, out)
     contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    cv2.drawContours(overlayed, contours, -1, color, 2)
+    if border_color == 'same':
+        cv2.drawContours(overlayed, contours, -1, color, 2)
+    elif border_color is not None:
+        cv2.drawContours(overlayed, contours, -1, border_color, 2)
     return overlayed
 
 
@@ -97,6 +100,7 @@ def fill_ellipses(mask, ellipses):
 
 
 """ operations """
+
 
 def resize(img, scale):
     return cv2.resize(img, scale)
