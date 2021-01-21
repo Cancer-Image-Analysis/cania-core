@@ -1,7 +1,7 @@
 from pathlib import Path
 import pandas as pd
 
-from cgpip.utils.image import read_rgb, write_rgb, read_tiff
+from cania.utils.image import read_rgb, write_rgb, read_tiff
 
 PNG = '.png'
 CSV = '.csv'
