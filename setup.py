@@ -4,7 +4,6 @@ def readme():
     with open('README.rst') as f:
         return f.read()
 
-print(find_namespace_packages(where='src'))
 setup(name='cania-core',
       version='0.1',
       description='Cancer Image Analysis python package',
@@ -25,6 +24,7 @@ setup(name='cania-core',
       install_requires=[
           'tifffile',
           'openslide-python',
+          'pandas'
       ],
       test_suite='nose.collector',
       tests_require=['nose'],
