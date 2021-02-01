@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import numpy as np
-import cv2
+
+from cania_utils.image import rgb2bgr
 
 
 class PatchGenerator(ABC):
@@ -75,7 +76,7 @@ class GridPatchAnalysis(ABC):
         self.patch_generator = patch_generator
         self.patch_analysis = patch_analysis
 
-    def run(self, ihc_slide, all_indices):
+    def run(self, ihc_slide, all_indices, disk_location=None):
         results = []  # row list
         for x, y, patch in self.patch_generator.get_patches(ihc_slide, all_indices):
             result = self.patch_analysis.run(patch)
@@ -86,4 +87,6 @@ class GridPatchAnalysis(ABC):
             result['patch.pad_x'] = patch.real_x
             result['patch.pad_y'] = patch.real_y
             results.append(result)
+            if disk_location:
+                disk_location.write('patch_{0}_{1}.png'.format(x, y), patch.stainings['bgr'])
         return results

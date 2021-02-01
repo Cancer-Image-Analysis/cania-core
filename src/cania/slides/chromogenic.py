@@ -6,6 +6,8 @@ from cania.slides.stainings import StainingIntensityRange, ConfigurableStainingI
 from cania.slides.slides import GenericSlide
 from cania.slides.regions import ScannerRegionData, SlideRegion
 
+from cania_utils.image import rgb2bgr, bgr2hsv
+
 
 class ChromogenicSlide(GenericSlide):
     def __init__(self, slide_path: str, slide_id: str):
@@ -19,10 +21,10 @@ class ChromogenicSlide(GenericSlide):
         return SlideRegion(region_data, region_image)
 
     def get_stainings(self, slide_region) -> dict:
-        rgb = cv2.cvtColor(slide_region.get_image(), cv2.COLOR_RGB2BGR)
-        hsv = cv2.cvtColor(rgb, cv2.COLOR_BGR2HSV)
+        bgr = rgb2bgr(slide_region.get_image())
+        hsv = bgr2hsv(bgr)
         stainings = dict()
-        stainings['rgb'] = rgb
+        stainings['bgr'] = bgr
         stainings['hsv'] = hsv
         for staining_name in self.stainings.keys():
             stainings[staining_name] = self.stainings[staining_name].get_mask(hsv)
